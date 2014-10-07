@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<project name="SwarmSim" default="all">
+    <property file="build.properties" />
+	<path id="master-classpath">
+		<pathelement path="${java.class.path}" />
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<pathelement path="${build.dir}" />
+	</path>
+    <property name="classpath" refid="master-classpath" />
+    
+    <target name="all" depends="build, build-jar, buildtest" description="Perform complete build process" />
+    
+    <target name="clean" description="Clean output directories">
+        <delete>
+            <fileset dir="${build.dir}">
+                <include name="**/*.class" />
+            </fileset>
+        </delete>
+    </target>
+    
+    <target name="cleantest" description="Clean output directories">
+        <delete>
+            <fileset dir="${test.build.dir}">
+                <include name="**/*.class" />
+            </fileset>
+        </delete>
+    </target>
+    
+    <target name="build" depends="clean" description="Compile source files">
+        <mkdir dir="${build.dir}" />
+        <javac includeantruntime="false" destdir="${build.dir}">
+            <src path="${src.dir}" />
+			<classpath refid="master-classpath" />
+        </javac>
+    </target>
+    
+    <target name="buildtest" depends="cleantest" description="Compile test source files">
+        <mkdir dir="${test.build.dir}" />
+        <javac includeantruntime="false" destdir="${test.build.dir}">
+            <src path="${test.src.dir}" />
+			<classpath refid="master-classpath" />
+        </javac>
+    </target>
+     
+    <target name="build-jar" depends="build" description="Create executable jar file">
+        <jar destfile="${jar.file}" basedir="${build.dir}">
+			<fileset dir="${build.dir}">
+				<include name="**/*.class" />
+			</fileset>
+			<zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+			<manifest>
+				<attribute name="Main-Class" value="${jar.mainclass}" />
+			</manifest>
+		</jar>
+    </target>
+</project>
