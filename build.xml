@@ -3,16 +3,22 @@
     <property file="build.properties" />
 	<path id="master-classpath">
 		<pathelement path="${java.class.path}" />
-		<fileset dir="${lib.dir}">
-			<include name="*.jar" />
-		</fileset>
+		<pathelement path="${lib.dir}" />
 		<pathelement path="${build.dir}" />
 	</path>
     <property name="classpath" refid="master-classpath" />
     
     <target name="all" depends="build, build-jar, buildtest" description="Perform complete build process" />
-    
-    <target name="clean" description="Clean output directories">
+	
+    <target name="mkdirs" description="Create all necessary directories">
+        <mkdir dir="${lib.dir}" />
+        <mkdir dir="${src.dir}" />
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${test.src.dir}" />
+        <mkdir dir="${test.build.dir}" />
+    </target>    
+
+    <target name="clean" depends="mkdirs" description="Clean output directories">
         <delete>
             <fileset dir="${build.dir}">
                 <include name="**/*.class" />
@@ -20,7 +26,7 @@
         </delete>
     </target>
     
-    <target name="cleantest" description="Clean output directories">
+    <target name="cleantest" depends="mkdirs" description="Clean output directories">
         <delete>
             <fileset dir="${test.build.dir}">
                 <include name="**/*.class" />
